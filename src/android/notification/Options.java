@@ -49,6 +49,8 @@ import static android.support.v4.app.NotificationCompat.PRIORITY_MIN;
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 import static android.support.v4.app.NotificationCompat.VISIBILITY_SECRET;
 
+import com.hitgrab.android.mousehunt.R;
+
 /**
  * Wrapper around the JSON object passed through JS which contains all
  * possible option values. Class provides simple readers and more advanced
@@ -375,22 +377,28 @@ public final class Options {
      * Small icon resource ID for the local notification.
      */
     int getSmallIcon() {
-        String icon = options.optString("smallIcon", DEFAULT_ICON);
-        int resId   = assets.getResId(icon);
 
-        if (resId == 0) {
-            resId = assets.getResId(DEFAULT_ICON);
-        }
+        //region HitGrab
+        // Hardcode mousehunt small icon
+        return R.drawable.icon_white;
+        //endregion
 
-        if (resId == 0) {
-            resId = context.getApplicationInfo().icon;
-        }
+        // String icon = options.optString("smallIcon", DEFAULT_ICON);
+        // int resId   = assets.getResId(icon);
 
-        if (resId == 0) {
-            resId = android.R.drawable.ic_popup_reminder;
-        }
+        // if (resId == 0) {
+        //     resId = assets.getResId(DEFAULT_ICON);
+        // }
 
-        return resId;
+        // if (resId == 0) {
+        //     resId = context.getApplicationInfo().icon;
+        // }
+
+        // if (resId == 0) {
+        //     resId = android.R.drawable.ic_popup_reminder;
+        // }
+
+        // return resId;
     }
 
     /**

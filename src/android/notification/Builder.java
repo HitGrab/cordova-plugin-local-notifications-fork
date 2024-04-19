@@ -41,6 +41,9 @@ import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static de.appplant.cordova.plugin.notification.Notification.EXTRA_UPDATE;
 
+import com.hitgrab.android.mousehunt.HuntReceiver;
+import org.json.JSONObject;
+
 /**
  * Builder class for local notifications. Build fully configured local
  * notification specified by JSON object passed from JS side.
@@ -161,6 +164,38 @@ public final class Builder {
         } else {
             builder.setSmallIcon(options.getSmallIcon());
         }
+
+        //region HitGrab
+        // Check for extra data being passed in
+        String data = options.getDict().optString("data", "");
+        if (!data.equals("")) {
+            try {
+                JSONObject dataJSON = new JSONObject(data);
+                String category = dataJSON.optString("category", "no category");
+                String postParam = dataJSON.optString("post_param", "no post param");
+
+                // If this is a hunt notification, add a hunt action to allow the user to hunt
+                if (category.equals("HornNotification") && !postParam.equals("")) {
+                    Intent huntIntent = new Intent(context, HuntReceiver.class);
+                    huntIntent.putExtra("post_param", postParam);
+
+                    PendingIntent pendingHuntIntent = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        pendingHuntIntent = PendingIntent.getBroadcast(context, 0, huntIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                    } else {
+                        pendingHuntIntent = PendingIntent.getBroadcast(context, 0, huntIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+
+                    NotificationCompat.Action huntAction = new NotificationCompat.Action(0, "Hunt", pendingHuntIntent);
+                    builder.addAction(huntAction);
+                    // This is added to allow updates to not alert
+                    builder.setOnlyAlertOnce(true);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        //endregion
 
         applyStyle(builder);
         applyActions(builder);

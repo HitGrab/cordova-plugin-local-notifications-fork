@@ -68,9 +68,11 @@ public class TriggerReceiver extends AbstractTriggerReceiver {
             manager.setBadge(badge);
         }
 
-        if (options.shallWakeUp()) {
-            wakeUp(context);
-        }
+        //region HitGrab: Always prevent screen from waking up. Boolean 'wakeup' value from js is unreliable.
+        //  if (options.shallWakeUp()) {
+        //      wakeUp(context);
+        //  }
+        //endregion
 
         notification.show();
 
