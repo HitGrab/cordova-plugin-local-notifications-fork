@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
+import android.app.AlarmManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,7 @@ import de.appplant.cordova.plugin.badge.BadgeImpl;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.M;
 import static android.os.Build.VERSION_CODES.O;
+import static android.os.Build.VERSION_CODES.S;
 import static android.support.v4.app.NotificationManagerCompat.IMPORTANCE_DEFAULT;
 import static de.appplant.cordova.plugin.notification.Notification.PREF_KEY_ID;
 import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
@@ -85,6 +87,19 @@ public final class Manager {
      */
     public boolean hasPermission () {
         return getNotCompMgr().areNotificationsEnabled();
+    }
+
+    /**
+     * Check if the setting to schedule exact alarms is enabled.
+     */
+    public boolean canScheduleExactAlarms () {
+        if (SDK_INT < S){
+            return true;
+        }
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        return alarmManager.canScheduleExactAlarms();
     }
 
     /**
